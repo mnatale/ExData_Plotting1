@@ -19,7 +19,7 @@ plot_spec <- function(x) {
 ## Histogram generation
 		hist(x$Global_active_power, 
 								freq = TRUE, 
-								xlab = "Global_active_power (Kilowatts)", 
+								xlab = "Global Active Power (Kilowatts)", 
 							# ylab = "",
 								main = "Global Active Power",
 								col = "red"
