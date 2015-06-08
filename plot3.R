@@ -14,48 +14,48 @@
 ## Function to plot a graph with preset parameters.
 plot_spec <- function(x, startdate) {
 ## Set common paramters here
-		par(bg = "white")
-		time <- x$dateTime
+  par(bg = "white")
+  time <- x$dateTime
 
 ## Plot generation
-		plot(time, x$Sub_metering_1,
-								ylab = "Energy sub metering", 
-							 	xlab = "",
-								xaxt = "n",
-								main = "",
-								col = "black",
-								type = "l"
-		)
+  plot(time, x$Sub_metering_1,
+        ylab = "Energy sub metering", 
+         xlab = "",
+        xaxt = "n",
+        main = "",
+        col = "black",
+        type = "l"
+  )
 ## Additional measurements for graph
-		lines(time, x$Sub_metering_2, type = "l", col = "red")
-		lines(time, x$Sub_metering_3, type = "l", col = "blue")
+  lines(time, x$Sub_metering_2, type = "l", col = "red")
+  lines(time, x$Sub_metering_3, type = "l", col = "blue")
 
 ## format the x-axis to show the date "Day" names
-		axis.POSIXct(1, at = seq(as.POSIXct(startdate), max(time), "days"),
-																												format = "%a")
+  axis.POSIXct(1, at = seq(as.POSIXct(startdate), max(time), "days"),
+                            format = "%a")
 ## Create a legend with the following names and colors to match lines:
-		legend_txt <- c("Sub_metering_1", 
-										"Sub_metering_2", 
-										"Sub_metering_3")
+  legend_txt <- c("Sub_metering_1", 
+          "Sub_metering_2", 
+          "Sub_metering_3")
 
-		legend_color <- c("black", 
-											"red", 
-											"blue")
+  legend_color <- c("black", 
+           "red", 
+           "blue")
 
-		legend("topright", 
-						legend_txt, 
-						col = legend_color, 
-						lwd = 1)
+  legend("topright", 
+      legend_txt, 
+      col = legend_color, 
+      lwd = 1)
 
 ## Plotting parameters for png image type
-		dev.copy(png, 
-								width     = 1024, 
-								height    = 1024, 
-								units     = "px", 
-								res			  = 72,
-								pointsize = 12, 
-								file      = "plot3.png")
-		dev.off()
+  dev.copy(png, 
+        width     = 1024, 
+        height    = 1024, 
+        units     = "px", 
+        res     = 72,
+        pointsize = 12, 
+        file      = "plot3.png")
+  dev.off()
 }
 
 ## main function. Aquire data from file for plot. The file used can be found at:
@@ -67,38 +67,38 @@ plot_spec <- function(x, startdate) {
 plot3 <- function() {
 
 ## Required libraries
-	library(data.table)
-	library(dplyr)
+ library(data.table)
+ library(dplyr)
 
 ## Constant List
   ### File specifiers
   file      <- "./household_power_consumption.txt"
-	separator <- ";"
-	na_char   <- c("?", "NA", "")
+ separator <- ";"
+ na_char   <- c("?", "NA", "")
 #  col_types <- c("character", "character", "numeric", "numeric", "numeric",
-#																			"numeric", "numeric", "numeric","numeric")
-	col_types  <- ""
+#                   "numeric", "numeric", "numeric","numeric")
+ col_types  <- ""
 
-	## Date specifiers
-	startDate <- "2007-02-01 00:00:00"
-	endDate   <- "2007-02-03 00:00:00"
-	date_fmt  <- "%d/%m/%Y %H:%M:%S"
+ ## Date specifiers
+ startDate <- "2007-02-01 00:00:00"
+ endDate   <- "2007-02-03 00:00:00"
+ date_fmt  <- "%d/%m/%Y %H:%M:%S"
 
 ## Read file and make data table
-	f <- fread(file, header = TRUE, sep = separator, 
-												na.strings = na_char, colClasses = col_types)
+ f <- fread(file, header = TRUE, sep = separator, 
+            na.strings = na_char, colClasses = col_types)
 
 ## create data table
-	dt1 <- tbl_df(f)
+ dt1 <- tbl_df(f)
 
 ## Make a properly formated date and time and add as date to table
-	date_time <- strptime(paste(dt1$Date, dt1$Time), date_fmt)
-	date_time <- mutate(dt1, dateTime = as.POSIXct(date_time))
+ date_time <- strptime(paste(dt1$Date, dt1$Time), date_fmt)
+ date_time <- mutate(dt1, dateTime = as.POSIXct(date_time))
 
 ## Filter rows of interest by date and typed data columns to double.
-	filteredbydate <- filter(date_time, dateTime >= startDate & dateTime <= endDate)
+ filteredbydate <- filter(date_time, dateTime >= startDate & dateTime <= endDate)
   filteredbydate[,3:9] <- sapply(filteredbydate[,3:9], as.double)
 
 ## plot Global Active Power
-	plot_spec(filteredbydate, startDate)
+ plot_spec(filteredbydate, startDate)
 }
